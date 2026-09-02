@@ -1,14 +1,20 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 import joblib
 import pandas as pd
-import sqlite3
+import psycopg2
+import os
+from dotenv import load_dotenv
+from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
+
+load_dotenv()
 
 app = Flask(__name__)
 
-app.secret_key = "edurisk-secret-key-change-this"
-
-DB_NAME = "professors.db"
+app.secret_key = os.environ.get(
+    "SECRET_KEY",
+    "edurisk-secret-key-change-this"
+)
 
 
 # =====================================================
@@ -16,57 +22,10 @@ DB_NAME = "professors.db"
 # =====================================================
 
 def get_db():
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
-def init_db():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS professors (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            college TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            mobile TEXT NOT NULL,
-            password TEXT NOT NULL
-        )
-    """)
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS students (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            professor_id INTEGER NOT NULL,
-            name TEXT NOT NULL,
-            roll TEXT NOT NULL,
-            attendance REAL NOT NULL,
-            marks REAL NOT NULL,
-            assignments REAL NOT NULL,
-            department TEXT,
-            notes TEXT,
-            FOREIGN KEY (professor_id)
-            REFERENCES professors(id)
-        )
-    """)
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS prediction_history (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            student_id INTEGER NOT NULL,
-            professor_id INTEGER NOT NULL,
-            risk TEXT NOT NULL,
-            attendance REAL NOT NULL,
-            marks REAL NOT NULL,
-            assignments REAL NOT NULL,
-            predicted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (student_id) REFERENCES students(id),
-            FOREIGN KEY (professor_id) REFERENCES professors(id)
-        )
-    """)
-    conn.commit()
-    conn.close()
+    return psycopg2.connect(
+        os.environ.get("DATABASE_URL"),
+        cursor_factory=RealDictCursor
+    )
 
 
 # =====================================================
@@ -126,6 +85,8 @@ def register():
 
         hashed_password = generate_password_hash(password)
 
+        conn = None
+
         try:
 
             conn = get_db()
@@ -134,7 +95,7 @@ def register():
             cursor.execute("""
                 INSERT INTO professors
                 (name, college, email, mobile, password)
-                VALUES (?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s)
             """, (
                 name,
                 college,
@@ -144,12 +105,29 @@ def register():
             ))
 
             conn.commit()
-            conn.close()
 
             return redirect(url_for("login"))
 
-        except sqlite3.IntegrityError:
+        except psycopg2.IntegrityError:
+
+            if conn:
+                conn.rollback()
+
             return "Email already registered!", 409
+
+        except Exception as e:
+
+            if conn:
+                conn.rollback()
+
+            print("Registration error:", repr(e))
+
+            return "Registration failed: " + str(e), 500
+
+        finally:
+
+            if conn:
+                conn.close()
 
     return render_template("register.html")
 
@@ -170,11 +148,12 @@ def login():
         cursor = conn.cursor()
 
         cursor.execute(
-            "SELECT * FROM professors WHERE email = ?",
+            "SELECT * FROM professors WHERE email = %s",
             (email,)
         )
 
         professor = cursor.fetchone()
+
         conn.close()
 
         if professor and check_password_hash(
@@ -235,7 +214,7 @@ def get_students():
             department,
             notes
         FROM students
-        WHERE professor_id = ?
+        WHERE professor_id = %s
         ORDER BY id DESC
     """, (professor_id,))
 
@@ -328,9 +307,23 @@ def add_student():
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("""
-        INSERT INTO students
-        (
+    try:
+
+        cursor.execute("""
+            INSERT INTO students
+            (
+                professor_id,
+                name,
+                roll,
+                attendance,
+                marks,
+                assignments,
+                department,
+                notes
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+        """, (
             professor_id,
             name,
             roll,
@@ -339,24 +332,25 @@ def add_student():
             assignments,
             department,
             notes
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        professor_id,
-        name,
-        roll,
-        attendance,
-        marks,
-        assignments,
-        department,
-        notes
-    ))
+        ))
 
-    conn.commit()
+        student_id = cursor.fetchone()["id"]
 
-    student_id = cursor.lastrowid
+        conn.commit()
 
-    conn.close()
+    except Exception as e:
+
+        conn.rollback()
+
+        print("Add student error:", repr(e))
+
+        return jsonify({
+            "error": "Failed to add student: " + str(e)
+        }), 500
+
+    finally:
+
+        conn.close()
 
     return jsonify({
         "success": True,
@@ -427,36 +421,50 @@ def edit_student(student_id):
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("""
-        UPDATE students
-        SET
-            name = ?,
-            roll = ?,
-            attendance = ?,
-            marks = ?,
-            assignments = ?,
-            department = ?,
-            notes = ?
-        WHERE
-            id = ?
-            AND professor_id = ?
-    """, (
-        name,
-        roll,
-        attendance,
-        marks,
-        assignments,
-        department,
-        notes,
-        student_id,
-        professor_id
-    ))
+    try:
 
-    conn.commit()
+        cursor.execute("""
+            UPDATE students
+            SET
+                name = %s,
+                roll = %s,
+                attendance = %s,
+                marks = %s,
+                assignments = %s,
+                department = %s,
+                notes = %s
+            WHERE
+                id = %s
+                AND professor_id = %s
+        """, (
+            name,
+            roll,
+            attendance,
+            marks,
+            assignments,
+            department,
+            notes,
+            student_id,
+            professor_id
+        ))
 
-    updated = cursor.rowcount
+        updated = cursor.rowcount
 
-    conn.close()
+        conn.commit()
+
+    except Exception as e:
+
+        conn.rollback()
+
+        print("Edit student error:", repr(e))
+
+        return jsonify({
+            "error": "Failed to update student: " + str(e)
+        }), 500
+
+    finally:
+
+        conn.close()
 
     if updated == 0:
 
@@ -488,21 +496,35 @@ def delete_student(student_id):
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("""
-        DELETE FROM students
-        WHERE
-            id = ?
-            AND professor_id = ?
-    """, (
-        student_id,
-        professor_id
-    ))
+    try:
 
-    conn.commit()
+        cursor.execute("""
+            DELETE FROM students
+            WHERE
+                id = %s
+                AND professor_id = %s
+        """, (
+            student_id,
+            professor_id
+        ))
 
-    deleted = cursor.rowcount
+        deleted = cursor.rowcount
 
-    conn.close()
+        conn.commit()
+
+    except Exception as e:
+
+        conn.rollback()
+
+        print("Delete student error:", repr(e))
+
+        return jsonify({
+            "error": "Failed to delete student: " + str(e)
+        }), 500
+
+    finally:
+
+        conn.close()
 
     if deleted == 0:
 
@@ -572,8 +594,8 @@ def predict():
             notes
         FROM students
         WHERE
-            id = ?
-            AND professor_id = ?
+            id = %s
+            AND professor_id = %s
     """, (
         student_id,
         professor_id
@@ -633,14 +655,12 @@ def predict():
 
     except Exception as e:
 
-        print(
-            "Prediction error:",
-            repr(e)
-        )
+        print("Prediction error:", repr(e))
 
         return jsonify({
             "error": "AI prediction failed: " + str(e)
         }), 500
+
 
     # =====================================================
     # SAVE AI PREDICTION HISTORY
@@ -649,28 +669,44 @@ def predict():
     history_conn = get_db()
     history_cursor = history_conn.cursor()
 
-    history_cursor.execute("""
-        INSERT INTO prediction_history
-        (
-            student_id,
+    try:
+
+        history_cursor.execute("""
+            INSERT INTO prediction_history
+            (
+                student_id,
+                professor_id,
+                risk,
+                attendance,
+                marks,
+                assignments
+            )
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (
+            student["id"],
             professor_id,
             risk,
             attendance,
             marks,
             assignments
-        )
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (
-        student["id"],
-        professor_id,
-        risk,
-        attendance,
-        marks,
-        assignments
-    ))
+        ))
 
-    history_conn.commit()
-    history_conn.close()
+        history_conn.commit()
+
+    except Exception as e:
+
+        history_conn.rollback()
+
+        print("Prediction history error:", repr(e))
+
+        return jsonify({
+            "error": "Failed to save prediction history: " + str(e)
+        }), 500
+
+    finally:
+
+        history_conn.close()
+
 
     # =================================================
     # PERSONALIZED RECOMMENDATIONS
@@ -679,7 +715,6 @@ def predict():
     recommendations = []
 
 
-    # Attendance recommendation
     if attendance < 60:
 
         recommendations.append(
@@ -699,7 +734,6 @@ def predict():
         )
 
 
-    # Marks recommendation
     if marks < 50:
 
         recommendations.append(
@@ -719,7 +753,6 @@ def predict():
         )
 
 
-    # Assignment recommendation
     if assignments < 50:
 
         recommendations.append(
@@ -815,28 +848,18 @@ Maintain the current academic performance and continue regular study habits.
     # =================================================
 
     return jsonify({
-
         "success": True,
-
         "student_id": student["id"],
-
         "student_name": student["name"],
-
         "roll": student["roll"],
-
         "attendance": attendance,
-
         "marks": marks,
-
         "assignments": assignments,
-
         "risk": risk,
-
         "ai_analysis": ai_analysis,
-
         "recommendations": recommendations
-
     })
+
 
 # =====================================================
 # AI PREDICTION HISTORY
@@ -867,8 +890,8 @@ def prediction_history(student_id):
             predicted_at
         FROM prediction_history
         WHERE
-            student_id = ?
-            AND professor_id = ?
+            student_id = %s
+            AND professor_id = %s
         ORDER BY id DESC
     """, (
         student_id,
@@ -884,13 +907,12 @@ def prediction_history(student_id):
 
     return jsonify(history)
 
+
 # =====================================================
 # START SERVER
 # =====================================================
 
 if __name__ == "__main__":
-
-    init_db()
 
     print("")
     print("======================================")
