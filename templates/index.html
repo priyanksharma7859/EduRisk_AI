@@ -1,0 +1,3948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EduRisk AI | Academic Intelligence</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter,Arial,Helvetica,sans-serif;
+}
+
+:root{
+    --primary:#2563eb;
+    --primary-dark:#1d4ed8;
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --text:#172033;
+    --muted:#718096;
+    --border:#e5eaf2;
+    --green:#16a34a;
+    --orange:#f59e0b;
+    --red:#dc2626;
+    --purple:#7c3aed;
+    --sidebar:#111827;
+    --shadow:0 8px 25px rgba(15,23,42,.06);
+}
+
+body.dark{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f1f5f9;
+    --muted:#94a3b8;
+    --border:#334155;
+    --sidebar:#020617;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    transition:.25s;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:245px;
+    height:100vh;
+    background:var(--sidebar);
+    color:white;
+    padding:22px 15px;
+    z-index:1000;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:5px 8px;
+    margin-bottom:32px;
+}
+
+.logo-icon{
+    width:44px;
+    height:44px;
+    border-radius:13px;
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+}
+
+.logo h2{
+    font-size:18px;
+}
+
+.logo small{
+    color:#94a3b8;
+    font-size:10px;
+}
+
+.nav-title{
+    color:#64748b;
+    font-size:10px;
+    font-weight:bold;
+    margin:20px 10px 10px;
+    letter-spacing:1px;
+}
+
+.nav-item{
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:6px;
+    cursor:pointer;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    color:#cbd5e1;
+    transition:.2s;
+    font-size:13px;
+}
+
+.nav-item:hover,
+.nav-item.active{
+    background:#1e40af;
+    color:white;
+}
+
+.sidebar-bottom{
+    position:absolute;
+    bottom:20px;
+    left:15px;
+    right:15px;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    margin-left:245px;
+    min-height:100vh;
+}
+
+.topbar{
+    height:72px;
+    background:var(--card);
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 28px;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.page-title h1{
+    font-size:21px;
+}
+
+.page-title p{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:4px;
+}
+
+.top-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.icon-btn{
+    width:40px;
+    height:40px;
+    border:1px solid var(--border);
+    background:var(--card);
+    border-radius:10px;
+    cursor:pointer;
+    font-size:17px;
+    color:var(--text);
+}
+
+.profile{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    font-size:13px;
+}
+
+.logout-btn{
+    text-decoration:none;
+    background:#dc2626;
+    padding:10px 14px;
+    border-radius:8px;
+    color:white;
+    font-size:12px;
+}
+
+.content{
+    padding:28px;
+}
+
+/* ================= WELCOME ================= */
+
+.welcome{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:22px;
+}
+
+.welcome h2{
+    font-size:26px;
+    margin-bottom:6px;
+}
+
+.welcome p{
+    color:var(--muted);
+    font-size:13px;
+}
+
+/* ================= BUTTON ================= */
+
+.btn{
+    border:0;
+    background:var(--primary);
+    color:white;
+    padding:11px 17px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn:hover{
+    background:var(--primary-dark);
+}
+
+.btn.secondary{
+    background:#e2e8f0;
+    color:#1e293b;
+}
+
+/* ================= STAT CARDS ================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-bottom:20px;
+}
+
+.stat-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:19px;
+    box-shadow:var(--shadow);
+}
+
+.stat-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.stat-icon{
+    width:42px;
+    height:42px;
+    border-radius:11px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:19px;
+}
+
+.blue{
+    background:#dbeafe;
+    color:#2563eb;
+}
+
+.red-bg{
+    background:#fee2e2;
+    color:#dc2626;
+}
+
+.orange-bg{
+    background:#fef3c7;
+    color:#d97706;
+}
+
+.green-bg{
+    background:#dcfce7;
+    color:#16a34a;
+}
+
+.stat-card h3{
+    font-size:28px;
+    margin:15px 0 3px;
+}
+
+.stat-card p{
+    color:var(--muted);
+    font-size:12px;
+}
+
+/* ================= QUICK INSIGHT ================= */
+
+.insight-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:18px;
+    margin-bottom:20px;
+}
+
+.ai-panel{
+    background:linear-gradient(135deg,#172554,#2563eb,#4f46e5);
+    color:white;
+    border-radius:16px;
+    padding:23px;
+    box-shadow:0 10px 30px rgba(37,99,235,.18);
+}
+
+.ai-panel h3{
+    font-size:18px;
+    margin-bottom:8px;
+}
+
+.ai-panel p{
+    color:#dbeafe;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.ai-metrics{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:18px;
+}
+
+.ai-box{
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.12);
+    padding:14px;
+    border-radius:11px;
+    font-size:11px;
+}
+
+.ai-box strong{
+    display:block;
+    font-size:20px;
+    margin-top:5px;
+}
+
+.smart-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+    box-shadow:var(--shadow);
+}
+
+.smart-card h3{
+    font-size:16px;
+    margin-bottom:14px;
+}
+
+.alert-item{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+    font-size:12px;
+}
+
+.alert-item:last-child{
+    border-bottom:0;
+}
+
+.alert-icon{
+    width:30px;
+    height:30px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+/* ================= ANALYTICS ================= */
+
+.analytics{
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:18px;
+    margin-bottom:20px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:21px;
+    box-shadow:var(--shadow);
+}
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.card-header h3{
+    font-size:16px;
+}
+
+.card-header span{
+    color:var(--muted);
+    font-size:11px;
+}
+
+/* ================= BAR CHART ================= */
+
+.chart{
+    width:100%;
+    height:260px;
+    display:flex;
+    align-items:flex-end;
+    gap:18px;
+    padding:20px 8px 0;
+    border-bottom:1px solid var(--border);
+}
+
+.bar-group{
+    flex:1;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    align-items:center;
+}
+
+.bar{
+    width:45px;
+    background:linear-gradient(to top,#2563eb,#60a5fa);
+    border-radius:8px 8px 0 0;
+    min-height:5px;
+}
+
+.bar-label{
+    margin-top:9px;
+    font-size:11px;
+    color:var(--muted);
+}
+
+.bar-value{
+    font-size:11px;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+/* ================= RISK ================= */
+
+.risk-row{
+    margin-bottom:21px;
+}
+
+.risk-label{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:7px;
+    font-size:12px;
+}
+
+.progress{
+    height:9px;
+    background:#e2e8f0;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.progress span{
+    height:100%;
+    display:block;
+    border-radius:10px;
+}
+
+.high{
+    background:var(--red);
+}
+
+.medium{
+    background:var(--orange);
+}
+
+.low{
+    background:var(--green);
+}
+
+/* ================= EXTRA METRICS ================= */
+
+.metric-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.metric{
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:15px;
+}
+
+.metric small{
+    color:var(--muted);
+    font-size:11px;
+}
+
+.metric strong{
+    display:block;
+    font-size:22px;
+    margin-top:5px;
+}
+
+/* ================= TABLE ================= */
+
+.table-card{
+    margin-top:20px;
+}
+
+.table-tools{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.search{
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--text);
+    outline:none;
+    min-width:200px;
+}
+
+select{
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--text);
+}
+
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:13px 9px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+    white-space:nowrap;
+}
+
+th{
+    color:var(--muted);
+    font-size:10px;
+    text-transform:uppercase;
+}
+
+td{
+    font-size:12px;
+}
+
+.student{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.avatar{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:#dbeafe;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#1d4ed8;
+    font-weight:bold;
+}
+
+.badge{
+    padding:5px 8px;
+    border-radius:20px;
+    font-size:10px;
+    font-weight:bold;
+}
+
+.badge.high-risk{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.badge.medium-risk{
+    background:#fef3c7;
+    color:#b45309;
+}
+
+.badge.low-risk{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.action-btn{
+    border:0;
+    background:transparent;
+    cursor:pointer;
+    font-size:15px;
+    margin-right:5px;
+}
+
+/* ================= MODAL ================= */
+
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.58);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:2000;
+    padding:20px;
+}
+
+.modal-overlay.show{
+    display:flex;
+}
+
+.modal{
+    background:var(--card);
+    color:var(--text);
+    width:600px;
+    max-width:100%;
+    max-height:90vh;
+    overflow:auto;
+    border-radius:16px;
+    padding:24px;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.close{
+    border:0;
+    background:transparent;
+    font-size:25px;
+    cursor:pointer;
+    color:var(--text);
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.form-group.full{
+    grid-column:1/-1;
+}
+
+.form-group label{
+    font-size:11px;
+    color:var(--muted);
+}
+
+.form-group input,
+.form-group select{
+    width:100%;
+    padding:10px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--text);
+}
+
+.form-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:9px;
+    margin-top:20px;
+}
+
+/* ================= TOAST ================= */
+
+.toast{
+    position:fixed;
+    bottom:24px;
+    right:24px;
+    background:#111827;
+    color:white;
+    padding:13px 17px;
+    border-radius:9px;
+    display:none;
+    z-index:3000;
+    font-size:13px;
+}
+
+.toast.show{
+    display:block;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:1050px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .insight-grid,
+    .analytics{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:700px){
+
+    .sidebar{
+        width:68px;
+        padding:18px 9px;
+    }
+
+    .logo h2,
+    .logo small,
+    .nav-item span:last-child,
+    .nav-title{
+        display:none;
+    }
+
+    .logo{
+        justify-content:center;
+    }
+
+    .nav-item{
+        justify-content:center;
+        padding:12px 5px;
+    }
+
+    .main{
+        margin-left:68px;
+    }
+
+    .content{
+        padding:14px;
+    }
+
+    .topbar{
+        padding:0 14px;
+    }
+
+    .page-title h1{
+        font-size:16px;
+    }
+
+    .page-title p{
+        display:none;
+    }
+
+    .profile{
+        display:none;
+    }
+
+    .logout-btn{
+        display:none;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .welcome{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:13px;
+    }
+
+    .ai-metrics{
+        grid-template-columns:1fr;
+    }
+
+    .metric-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-group.full{
+        grid-column:auto;
+    }
+
+    .notification-panel{
+        right:10px;
+        width:calc(100% - 20px);
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            🎓
+        </div>
+
+        <div>
+            <h2>EduRisk AI</h2>
+            <small>Academic Intelligence</small>
+        </div>
+
+    </div>
+
+    <div class="nav-title">
+        MAIN MENU
+    </div>
+
+    <div class="nav-item active">
+        <span>📊</span>
+        <span>Dashboard</span>
+    </div>
+
+    <div class="nav-item"
+         onclick="scrollToStudents()">
+        <span>👨‍🎓</span>
+        <span>Students</span>
+    </div>
+
+    <div class="nav-item"
+         onclick="showRiskOnly()">
+        <span>⚠️</span>
+        <span>At-Risk Students</span>
+    </div>
+
+    <div class="nav-title">
+        TOOLS
+    </div>
+
+    <div class="nav-item"
+         onclick="openAddModal()">
+        <span>➕</span>
+        <span>Add Student</span>
+    </div>
+
+    <div class="nav-item"
+         onclick="exportCSV()">
+        <span>📥</span>
+        <span>Export Data</span>
+    </div>
+
+    <div class="sidebar-bottom">
+
+        <div class="nav-item"
+             onclick="toggleDarkMode()">
+
+            <span id="darkIcon">🌙</span>
+            <span>Dark Mode</span>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+<header class="topbar">
+
+    <div class="page-title">
+
+        <h1>
+            Student Academic Dashboard
+        </h1>
+
+        <p>
+            AI-powered academic risk monitoring system
+        </p>
+
+    </div>
+
+    <div class="top-actions">
+
+        <button
+            class="icon-btn"
+            onclick="toggleDarkMode()">
+
+            <span id="topDarkIcon">
+                🌙
+            </span>
+
+        </button>
+
+        <div class="profile">
+            PS
+        </div>
+
+        <a href="/logout"
+           class="logout-btn">
+            Logout
+        </a>
+
+    </div>
+
+</header>
+
+
+<section class="content">
+
+<!-- ================= WELCOME ================= -->
+
+<div class="welcome">
+
+    <div>
+
+        <h2 id="welcomeTitle">
+            Good Morning 👋
+        </h2>
+
+        <p>
+            Monitor student performance and identify academic risks early.
+        </p>
+
+    </div>
+
+    <button
+        class="btn"
+        onclick="openAddModal()">
+
+        + Add Student
+
+    </button>
+
+</div>
+
+
+<!-- ================= STATISTICS ================= -->
+
+<div class="stats">
+
+    <div class="stat-card">
+
+        <div class="stat-top">
+
+            <div>
+                <p>Total Students</p>
+            </div>
+
+            <div class="stat-icon blue">
+                👨‍🎓
+            </div>
+
+        </div>
+
+        <h3 id="totalStudents">0</h3>
+
+        <p>Enrolled students</p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-top">
+
+            <div>
+                <p>High Risk</p>
+            </div>
+
+            <div class="stat-icon red-bg">
+                🚨
+            </div>
+
+        </div>
+
+        <h3 id="highRisk">0</h3>
+
+        <p>Immediate attention</p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-top">
+
+            <div>
+                <p>Medium Risk</p>
+            </div>
+
+            <div class="stat-icon orange-bg">
+                ⚡
+            </div>
+
+        </div>
+
+        <h3 id="mediumRisk">0</h3>
+
+        <p>Needs monitoring</p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-top">
+
+            <div>
+                <p>Low Risk</p>
+            </div>
+
+            <div class="stat-icon green-bg">
+                ✓
+            </div>
+
+        </div>
+
+        <h3 id="lowRisk">0</h3>
+
+        <p>Performing well</p>
+
+    </div>
+
+</div>
+
+
+<!-- ================= AI + ALERTS ================= -->
+
+<div class="insight-grid">
+
+    <div class="ai-panel">
+
+        <h3>
+            🤖 AI Academic Risk Prediction
+        </h3>
+
+        <p>
+            EduRisk AI analyzes attendance, marks and assignment
+            performance to identify students who may require
+            early academic intervention.
+        </p>
+
+        <div class="ai-metrics">
+
+            <div class="ai-box">
+                AI Model
+                <strong>Active</strong>
+            </div>
+
+            <div class="ai-box">
+                Students Analyzed
+                <strong id="aiAnalyzed">0</strong>
+            </div>
+
+            <div class="ai-box">
+                Alerts Generated
+                <strong id="aiAlerts">0</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="smart-card">
+
+        <h3>
+            🔔 Smart Alerts
+        </h3>
+
+        <div class="alert-item">
+
+            <div class="alert-icon"
+                 style="background:#fee2e2">
+                🚨
+            </div>
+
+            <div>
+                <strong>High Risk</strong>
+                <p style="color:var(--muted);margin-top:3px">
+                    <span id="alertHigh">0</span>
+                    students require attention.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="alert-item">
+
+            <div class="alert-icon"
+                 style="background:#fef3c7">
+                ⚡
+            </div>
+
+            <div>
+                <strong>Monitor</strong>
+                <p style="color:var(--muted);margin-top:3px">
+                    <span id="alertMedium">0</span>
+                    students need monitoring.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="alert-item">
+
+            <div class="alert-icon"
+                 style="background:#dcfce7">
+                ✓
+            </div>
+
+            <div>
+                <strong>Stable</strong>
+                <p style="color:var(--muted);margin-top:3px">
+                    <span id="alertLow">0</span>
+                    students performing well.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= ANALYTICS ================= -->
+
+<div class="analytics">
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h3>
+                📈 Academic Performance
+            </h3>
+
+            <span>
+                Average percentage
+            </span>
+
+        </div>
+
+        <div class="chart"
+             id="performanceChart">
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h3>
+                🎯 Risk Distribution
+            </h3>
+
+            <span>
+                AI assessment
+            </span>
+
+        </div>
+
+        <div class="risk-row">
+
+            <div class="risk-label">
+
+                <span>High Risk</span>
+
+                <strong id="highPercent">
+                    0%
+                </strong>
+
+            </div>
+
+            <div class="progress">
+
+                <span
+                    class="high"
+                    id="highBar"
+                    style="width:0%">
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="risk-row">
+
+            <div class="risk-label">
+
+                <span>Medium Risk</span>
+
+                <strong id="mediumPercent">
+                    0%
+                </strong>
+
+            </div>
+
+            <div class="progress">
+
+                <span
+                    class="medium"
+                    id="mediumBar"
+                    style="width:0%">
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="risk-row">
+
+            <div class="risk-label">
+
+                <span>Low Risk</span>
+
+                <strong id="lowPercent">
+                    0%
+                </strong>
+
+            </div>
+
+            <div class="progress">
+
+                <span
+                    class="low"
+                    id="lowBar"
+                    style="width:0%">
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= EXTRA METRICS ================= -->
+
+<div class="metric-grid">
+
+    <div class="metric">
+
+        <small>
+            Average Attendance
+        </small>
+
+        <strong id="avgAttendance">
+            0%
+        </strong>
+
+    </div>
+
+    <div class="metric">
+
+        <small>
+            Average Marks
+        </small>
+
+        <strong id="avgMarks">
+            0%
+        </strong>
+
+    </div>
+
+    <div class="metric">
+
+        <small>
+            Average Assignments
+        </small>
+
+        <strong id="avgAssignments">
+            0%
+        </strong>
+
+    </div>
+
+</div>
+
+
+<!-- ================= STUDENT TABLE ================= -->
+
+<div class="card table-card"
+     id="studentsSection">
+
+    <div class="card-header">
+
+        <div>
+
+            <h3>
+                👨‍🎓 Student Performance
+            </h3>
+
+            <span>
+                AI-generated academic risk assessment
+            </span>
+
+        </div>
+
+        <div class="table-tools">
+
+            <input
+                type="text"
+                class="search"
+                id="searchInput"
+                placeholder="🔎 Search student..."
+                oninput="renderStudents()">
+
+            <select
+                id="riskFilter"
+                onchange="renderStudents()">
+
+                <option value="All">
+                    All Risk
+                </option>
+
+                <option value="High">
+                    High Risk
+                </option>
+
+                <option value="Medium">
+                    Medium Risk
+                </option>
+
+                <option value="Low">
+                    Low Risk
+                </option>
+
+            </select>
+
+            <button
+                class="btn"
+                onclick="exportCSV()">
+                📥 CSV
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Student</th>
+                    <th>Attendance</th>
+                    <th>Marks</th>
+                    <th>Assignments</th>
+                    <th>Risk Score</th>
+                    <th>Status</th>
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="studentTable">
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<!-- ================= ADD / EDIT MODAL ================= -->
+
+<div class="modal-overlay"
+     id="studentModal">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2 id="modalTitle">
+                    Add Student
+                </h2>
+
+                <p style="color:var(--muted);font-size:12px;margin-top:5px">
+                    Enter academic performance details
+                </p>
+
+            </div>
+
+            <button
+                class="close"
+                onclick="closeModal()">
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="studentForm">
+
+            <input
+                type="hidden"
+                id="editId">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Student Name</label>
+
+                    <input
+                        id="studentName"
+                        required
+                        placeholder="e.g. Rahul Patel">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Roll Number</label>
+
+                    <input
+                        id="rollNo"
+                        required
+                        placeholder="e.g. CE101">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Attendance (%)</label>
+
+                    <input
+                        id="attendance"
+                        type="number"
+                        min="0"
+                        max="100"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Marks (%)</label>
+
+                    <input
+                        id="marks"
+                        type="number"
+                        min="0"
+                        max="100"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Assignment Completion (%)</label>
+
+                    <input
+                        id="assignments"
+                        type="number"
+                        min="0"
+                        max="100"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Department</label>
+
+                    <select id="department">
+
+                        <option>
+                            Computer Engineering
+                        </option>
+
+                        <option>
+                            Information Technology
+                        </option>
+
+                        <option>
+                            Electronics
+                        </option>
+
+                        <option>
+                            Mechanical
+                        </option>
+
+                        <option>
+                            Civil
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>Notes</label>
+
+                    <input
+                        id="notes"
+                        placeholder="Optional note">
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    class="btn secondary"
+                    onclick="closeModal()">
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn">
+                    Save Student
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= AI MODAL ================= -->
+
+<div class="modal-overlay"
+     id="aiModal">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2>
+                    🤖 EduRisk AI Analysis
+                </h2>
+
+                <p style="color:var(--muted);font-size:12px;margin-top:5px">
+                    AI-powered academic risk assessment
+                </p>
+
+            </div>
+
+            <button
+                class="close"
+                onclick="closeAIModal()">
+                ×
+            </button>
+
+        </div>
+
+        <div id="aiResultContent">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= TOAST ================= -->
+
+<div class="toast"
+     id="toast">
+</div>
+
+
+<script>
+
+/* =====================================================
+   GLOBAL DATA
+===================================================== */
+
+let students = [];
+
+
+/* =====================================================
+   LOAD STUDENTS
+===================================================== */
+
+async function loadStudents(){
+
+    try{
+
+        const response =
+            await fetch("/students");
+
+        if(response.status === 401){
+
+            window.location.href =
+                "/login";
+
+            return;
+        }
+
+        const data =
+            await response.json();
+
+        students =
+            Array.isArray(data)
+            ? data
+            : [];
+
+        updateDashboard();
+
+        renderStudents();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+            "Database connection error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   RISK CALCULATION
+===================================================== */
+
+function calculateRisk(student){
+
+    const attendance =
+        Number(student.attendance || 0);
+
+    const marks =
+        Number(student.marks || 0);
+
+    const assignments =
+        Number(student.assignments || 0);
+
+    const score =
+        (attendance * 0.40) +
+        (marks * 0.40) +
+        (assignments * 0.20);
+
+    let risk;
+
+    if(score < 55){
+
+        risk = "High";
+
+    }
+    else if(score < 75){
+
+        risk = "Medium";
+
+    }
+    else{
+
+        risk = "Low";
+
+    }
+
+    return {
+
+        score:Math.round(score),
+
+        risk:risk
+
+    };
+
+}
+
+
+/* =====================================================
+   AVERAGE
+===================================================== */
+
+function average(property){
+
+    if(students.length === 0)
+        return 0;
+
+    const total =
+        students.reduce(
+            (sum,student) =>
+                sum +
+                Number(
+                    student[property] || 0
+                ),
+            0
+        );
+
+    return Math.round(
+        total / students.length
+    );
+
+}
+
+
+/* =====================================================
+   OVERALL AVERAGE
+===================================================== */
+
+function overallAverage(){
+
+    if(students.length === 0)
+        return 0;
+
+    let total = 0;
+
+    students.forEach(student => {
+
+        total +=
+            calculateRisk(student).score;
+
+    });
+
+    return Math.round(
+        total / students.length
+    );
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function updateDashboard(){
+
+    const total =
+        students.length;
+
+    let high = 0;
+    let medium = 0;
+    let low = 0;
+
+    students.forEach(student => {
+
+        const result =
+            calculateRisk(student);
+
+        if(result.risk === "High")
+            high++;
+
+        if(result.risk === "Medium")
+            medium++;
+
+        if(result.risk === "Low")
+            low++;
+
+    });
+
+
+    document.getElementById(
+        "totalStudents"
+    ).textContent = total;
+
+    document.getElementById(
+        "highRisk"
+    ).textContent = high;
+
+    document.getElementById(
+        "mediumRisk"
+    ).textContent = medium;
+
+    document.getElementById(
+        "lowRisk"
+    ).textContent = low;
+
+
+    document.getElementById(
+        "aiAnalyzed"
+    ).textContent = total;
+
+    document.getElementById(
+        "aiAlerts"
+    ).textContent =
+        high + medium;
+
+
+    document.getElementById(
+        "alertHigh"
+    ).textContent = high;
+
+    document.getElementById(
+        "alertMedium"
+    ).textContent = medium;
+
+    document.getElementById(
+        "alertLow"
+    ).textContent = low;
+
+
+    const highPercent =
+        total
+        ? Math.round(high / total * 100)
+        : 0;
+
+    const mediumPercent =
+        total
+        ? Math.round(medium / total * 100)
+        : 0;
+
+    const lowPercent =
+        total
+        ? Math.round(low / total * 100)
+        : 0;
+
+
+    document.getElementById(
+        "highPercent"
+    ).textContent =
+        highPercent + "%";
+
+    document.getElementById(
+        "mediumPercent"
+    ).textContent =
+        mediumPercent + "%";
+
+    document.getElementById(
+        "lowPercent"
+    ).textContent =
+        lowPercent + "%";
+
+
+    document.getElementById(
+        "highBar"
+    ).style.width =
+        highPercent + "%";
+
+    document.getElementById(
+        "mediumBar"
+    ).style.width =
+        mediumPercent + "%";
+
+    document.getElementById(
+        "lowBar"
+    ).style.width =
+        lowPercent + "%";
+
+
+    document.getElementById(
+        "avgAttendance"
+    ).textContent =
+        average("attendance") + "%";
+
+    document.getElementById(
+        "avgMarks"
+    ).textContent =
+        average("marks") + "%";
+
+    document.getElementById(
+        "avgAssignments"
+    ).textContent =
+        average("assignments") + "%";
+
+
+    renderChart();
+
+}
+
+
+/* =====================================================
+   RENDER STUDENTS
+===================================================== */
+
+function renderStudents(){
+
+    const table =
+        document.getElementById(
+            "studentTable"
+        );
+
+    const search =
+        document.getElementById(
+            "searchInput"
+        ).value.toLowerCase();
+
+    const filter =
+        document.getElementById(
+            "riskFilter"
+        ).value;
+
+
+    const filtered =
+        students.filter(student => {
+
+            const result =
+                calculateRisk(student);
+
+            const name =
+                String(
+                    student.name || ""
+                ).toLowerCase();
+
+            const roll =
+                String(
+                    student.roll || ""
+                ).toLowerCase();
+
+            const matchesSearch =
+                name.includes(search) ||
+                roll.includes(search);
+
+            const matchesRisk =
+                filter === "All" ||
+                result.risk === filter;
+
+            return (
+                matchesSearch &&
+                matchesRisk
+            );
+
+        });
+
+
+    table.innerHTML = "";
+
+
+    if(filtered.length === 0){
+
+        table.innerHTML = `
+
+        <tr>
+
+            <td colspan="7"
+                style="text-align:center;padding:30px;color:var(--muted)">
+
+                👨‍🎓 No students found
+
+            </td>
+
+        </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    filtered.forEach(student => {
+
+        const result =
+            calculateRisk(student);
+
+        let badgeClass;
+
+        if(result.risk === "High")
+            badgeClass = "high-risk";
+
+        else if(result.risk === "Medium")
+            badgeClass = "medium-risk";
+
+        else
+            badgeClass = "low-risk";
+
+
+        const initials =
+            String(student.name || "")
+            .split(" ")
+            .map(word => word[0])
+            .join("")
+            .substring(0,2)
+            .toUpperCase();
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+<td>
+
+<div class="student">
+
+<div class="avatar">
+${initials}
+</div>
+
+<div>
+
+<strong>
+${escapeHTML(student.name)}
+</strong>
+
+<div style="font-size:10px;color:var(--muted)">
+${escapeHTML(student.roll)}
+</div>
+
+</div>
+
+</div>
+
+</td>
+
+
+<td>
+${student.attendance}%
+</td>
+
+
+<td>
+${student.marks}%
+</td>
+
+
+<td>
+${student.assignments}%
+</td>
+
+
+<td>
+<strong>
+${result.score}/100
+</strong>
+</td>
+
+
+<td>
+
+<span class="badge ${badgeClass}">
+${result.risk} Risk
+</span>
+
+</td>
+
+
+<td>
+
+<button
+class="action-btn"
+onclick="viewStudent(${student.id})"
+title="View">
+
+👁️
+
+</button>
+
+
+<button
+class="action-btn"
+onclick="getAIAnalysis(${student.id})"
+title="AI Analysis">
+
+🤖
+
+</button>
+
+<button
+class="action-btn"
+onclick="showPredictionHistory(${student.id})"
+title="Prediction History">
+
+📜
+
+</button>
+
+<button
+class="action-btn"
+onclick="editStudent(${student.id})"
+title="Edit">
+
+✏️
+
+</button>
+
+
+<button
+class="action-btn"
+onclick="deleteStudent(${student.id})"
+title="Delete">
+
+🗑️
+
+</button>
+
+</td>
+
+`;
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+/* =====================================================
+   SAFE HTML
+===================================================== */
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   CHART
+===================================================== */
+
+function renderChart(){
+
+    const chart =
+        document.getElementById(
+            "performanceChart"
+        );
+
+    chart.innerHTML = "";
+
+
+    const groups = [
+
+        {
+            name:"Attendance",
+            value:average("attendance")
+        },
+
+        {
+            name:"Marks",
+            value:average("marks")
+        },
+
+        {
+            name:"Assignments",
+            value:average("assignments")
+        },
+
+        {
+            name:"Overall",
+            value:overallAverage()
+        }
+
+    ];
+
+
+    groups.forEach(item => {
+
+        const group =
+            document.createElement("div");
+
+        group.className =
+            "bar-group";
+
+        group.innerHTML = `
+
+<div class="bar-value">
+${item.value}%
+</div>
+
+<div
+class="bar"
+style="height:${Math.max(item.value,5)}%">
+</div>
+
+<div class="bar-label">
+${item.name}
+</div>
+
+`;
+
+        chart.appendChild(group);
+
+    });
+
+}
+
+
+/* =====================================================
+   VIEW STUDENT
+===================================================== */
+
+function viewStudent(id){
+
+    const student = students.find(
+        s => Number(s.id) === Number(id)
+    );
+
+    if(!student){
+
+        showToast("Student not found");
+
+        return;
+    }
+
+    const result = calculateRisk(student);
+
+    let riskBackground;
+    let riskColor;
+
+    if(result.risk === "High"){
+
+        riskBackground = "#fee2e2";
+        riskColor = "#dc2626";
+
+    }
+    else if(result.risk === "Medium"){
+
+        riskBackground = "#fef3c7";
+        riskColor = "#d97706";
+
+    }
+    else{
+
+        riskBackground = "#dcfce7";
+        riskColor = "#16a34a";
+
+    }
+
+    const initials =
+        String(student.name || "")
+        .split(" ")
+        .map(word => word[0])
+        .join("")
+        .substring(0,2)
+        .toUpperCase();
+
+    const content =
+        document.getElementById("aiResultContent");
+
+    content.innerHTML = `
+
+        <div style="
+            text-align:center;
+            margin-bottom:22px">
+
+            <div style="
+                width:70px;
+                height:70px;
+                margin:auto;
+                border-radius:50%;
+                background:#dbeafe;
+                color:#1d4ed8;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                font-size:24px;
+                font-weight:bold">
+
+                ${escapeHTML(initials)}
+
+            </div>
+
+            <h2 style="margin-top:12px">
+
+                ${escapeHTML(student.name)}
+
+            </h2>
+
+            <p style="
+                color:var(--muted);
+                font-size:12px;
+                margin-top:4px">
+
+                Roll No: ${escapeHTML(student.roll)}
+
+            </p>
+
+        </div>
+
+
+        <div style="
+            padding:18px;
+            border-radius:14px;
+            background:${riskBackground};
+            margin-bottom:18px;
+            text-align:center">
+
+            <p style="
+                color:var(--muted);
+                font-size:11px">
+
+                Academic Risk
+
+            </p>
+
+            <h2 style="
+                margin-top:6px;
+                color:${riskColor}">
+
+                ${result.risk} Risk
+
+            </h2>
+
+            <p style="
+                margin-top:5px;
+                font-size:13px">
+
+                Risk Score:
+                <strong>
+                    ${result.score}/100
+                </strong>
+
+            </p>
+
+        </div>
+
+
+        <div class="metric-grid">
+
+            <div class="metric">
+
+                <small>
+                    Attendance
+                </small>
+
+                <strong>
+                    ${student.attendance}%
+                </strong>
+
+            </div>
+
+
+            <div class="metric">
+
+                <small>
+                    Marks
+                </small>
+
+                <strong>
+                    ${student.marks}%
+                </strong>
+
+            </div>
+
+
+            <div class="metric">
+
+                <small>
+                    Assignments
+                </small>
+
+                <strong>
+                    ${student.assignments}%
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+
+        <div style="
+            margin-top:18px;
+            padding:16px;
+            border:1px solid var(--border);
+            border-radius:12px">
+
+            <h3 style="font-size:15px">
+                🎓 Student Information
+            </h3>
+
+            <div style="
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:12px;
+                margin-top:14px;
+                font-size:12px">
+
+                <div>
+
+                    <span style="color:var(--muted)">
+                        Department
+                    </span>
+
+                    <strong style="
+                        display:block;
+                        margin-top:4px">
+
+                        ${escapeHTML(
+                            student.department || "N/A"
+                        )}
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span style="color:var(--muted)">
+                        Notes
+                    </span>
+
+                    <strong style="
+                        display:block;
+                        margin-top:4px">
+
+                        ${escapeHTML(
+                            student.notes || "No notes"
+                        )}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div style="
+            margin-top:18px;
+            display:flex;
+            gap:10px;
+            justify-content:flex-end">
+
+            <button
+                class="btn secondary"
+                onclick="closeAIModal()">
+
+                Close
+
+            </button>
+
+            <button
+                class="btn"
+                onclick="closeAIModal(); editStudent(${Number(student.id)})">
+
+                ✏️ Edit Student
+
+            </button>
+
+        </div>
+
+    `;
+
+
+    document.getElementById(
+        "aiModal"
+    ).classList.add("show");
+
+}
+
+
+/* =====================================================
+   ADD MODAL
+===================================================== */
+
+function openAddModal(){
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Add Student";
+
+    document.getElementById(
+        "studentForm"
+    ).reset();
+
+    document.getElementById(
+        "editId"
+    ).value = "";
+
+    document.getElementById(
+        "studentModal"
+    ).classList.add("show");
+
+}
+
+
+function closeModal(){
+
+    document.getElementById(
+        "studentModal"
+    ).classList.remove("show");
+
+}
+
+
+/* =====================================================
+   ADD / EDIT
+===================================================== */
+
+document.getElementById(
+    "studentForm"
+).addEventListener(
+    "submit",
+    async function(e){
+
+        e.preventDefault();
+
+
+        const editId =
+            document.getElementById(
+                "editId"
+            ).value;
+
+
+        const studentData = {
+
+            name:
+                document.getElementById(
+                    "studentName"
+                ).value.trim(),
+
+            roll:
+                document.getElementById(
+                    "rollNo"
+                ).value.trim(),
+
+            attendance:
+                Number(
+                    document.getElementById(
+                        "attendance"
+                    ).value
+                ),
+
+            marks:
+                Number(
+                    document.getElementById(
+                        "marks"
+                    ).value
+                ),
+
+            assignments:
+                Number(
+                    document.getElementById(
+                        "assignments"
+                    ).value
+                ),
+
+            department:
+                document.getElementById(
+                    "department"
+                ).value,
+
+            notes:
+                document.getElementById(
+                    "notes"
+                ).value.trim()
+
+        };
+
+
+        try{
+
+            let response;
+
+
+            if(editId){
+
+                response =
+                    await fetch(
+                        "/students/" + editId,
+                        {
+                            method:"PUT",
+
+                            headers:{
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    studentData
+                                )
+                        }
+                    );
+
+            }
+            else{
+
+                response =
+                    await fetch(
+                        "/students",
+                        {
+                            method:"POST",
+
+                            headers:{
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    studentData
+                                )
+                        }
+                    );
+
+            }
+
+
+            const result =
+                await response.json();
+
+
+            if(!response.ok){
+
+                showToast(
+                    result.error ||
+                    "Something went wrong"
+                );
+
+                return;
+
+            }
+
+
+            showToast(
+                editId
+                ? "Student updated successfully!"
+                : "Student added successfully!"
+            );
+
+
+            closeModal();
+
+            await loadStudents();
+
+        }
+        catch(error){
+
+            console.error(error);
+
+            showToast(
+                "Server error"
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   EDIT STUDENT
+===================================================== */
+
+function editStudent(id){
+
+    const student =
+        students.find(
+            s => Number(s.id) === Number(id)
+        );
+
+    if(!student)
+        return;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Student";
+
+
+    document.getElementById(
+        "editId"
+    ).value =
+        student.id;
+
+
+    document.getElementById(
+        "studentName"
+    ).value =
+        student.name;
+
+
+    document.getElementById(
+        "rollNo"
+    ).value =
+        student.roll;
+
+
+    document.getElementById(
+        "attendance"
+    ).value =
+        student.attendance;
+
+
+    document.getElementById(
+        "marks"
+    ).value =
+        student.marks;
+
+
+    document.getElementById(
+        "assignments"
+    ).value =
+        student.assignments;
+
+
+    document.getElementById(
+        "department"
+    ).value =
+        student.department;
+
+
+    document.getElementById(
+        "notes"
+    ).value =
+        student.notes || "";
+
+
+    document.getElementById(
+        "studentModal"
+    ).classList.add("show");
+
+}
+
+
+/* =====================================================
+   DELETE
+===================================================== */
+
+async function deleteStudent(id){
+
+    const student =
+        students.find(
+            s => Number(s.id) === Number(id)
+        );
+
+    if(!student)
+        return;
+
+
+    const confirmed =
+        confirm(
+            "Delete " +
+            student.name +
+            " from student records?"
+        );
+
+
+    if(!confirmed)
+        return;
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/students/" + id,
+                {
+                    method:"DELETE"
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if(!response.ok){
+
+            showToast(
+                result.error ||
+                "Delete failed"
+            );
+
+            return;
+
+        }
+
+
+        showToast(
+            "Student deleted successfully!"
+        );
+
+
+        await loadStudents();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+            "Server error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   AI ANALYSIS
+===================================================== */
+
+async function getAIAnalysis(id) {
+
+    const student = students.find(
+        s => Number(s.id) === Number(id)
+    );
+
+    if (!student) {
+        showToast("Student not found!");
+        return;
+    }
+
+    const content =
+        document.getElementById("aiResultContent");
+
+    const modal =
+        document.getElementById("aiModal");
+
+    content.innerHTML = `
+        <div style="
+            text-align:center;
+            padding:30px">
+
+            <div style="font-size:45px">
+                🤖
+            </div>
+
+            <h3 style="margin-top:12px">
+                AI is analyzing...
+            </h3>
+
+            <p style="
+                color:var(--muted);
+                margin-top:8px">
+
+                ${escapeHTML(student.name)}
+
+            </p>
+
+        </div>
+    `;
+
+    modal.classList.add("show");
+
+    try {
+
+        const response = await fetch("/predict", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                /*
+                 * IMPORTANT:
+                 * app.py હવે student_id માંગે છે.
+                 */
+                student_id: Number(student.id)
+
+            })
+
+        });
+
+
+        const result = await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.error ||
+                "AI prediction failed"
+            );
+
+        }
+
+
+        const risk =
+            String(result.risk || "Low");
+
+
+        let riskBackground;
+        let riskColor;
+
+
+        if (risk === "High") {
+
+            riskBackground = "#fee2e2";
+            riskColor = "#dc2626";
+
+        }
+
+        else if (risk === "Medium") {
+
+            riskBackground = "#fef3c7";
+            riskColor = "#d97706";
+
+        }
+
+        else {
+
+            riskBackground = "#dcfce7";
+            riskColor = "#16a34a";
+
+        }
+
+
+        content.innerHTML = `
+
+            <div style="
+                margin-bottom:20px">
+
+                <strong>
+                    👨‍🎓 Student
+                </strong>
+
+                <h2 style="
+                    margin-top:6px">
+
+                    ${escapeHTML(
+                        result.student_name ||
+                        student.name
+                    )}
+
+                </h2>
+
+                <p style="
+                    color:var(--muted);
+                    font-size:12px">
+
+                    Roll No:
+                    ${escapeHTML(
+                        result.roll ||
+                        student.roll
+                    )}
+
+                </p>
+
+            </div>
+
+
+            
+
+
+            <div class="ai-metrics">
+
+                <div class="ai-box"
+                     style="
+                     background:#2563eb;
+                     color:white">
+
+                    Attendance
+
+                    <strong>
+                        ${result.attendance}%
+                    </strong>
+
+                </div>
+
+
+                <div class="ai-box"
+                     style="
+                     background:#2563eb;
+                     color:white">
+
+                    Marks
+
+                    <strong>
+                        ${result.marks}%
+                    </strong>
+
+                </div>
+
+
+                <div class="ai-box"
+                     style="
+                     background:#2563eb;
+                     color:white">
+
+                    Assignments
+
+                    <strong>
+                        ${result.assignments}%
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div style="
+                margin-top:20px;
+                padding:18px;
+                border:1px solid var(--border);
+                border-radius:12px">
+
+                <h3>
+                    💡 AI Analysis
+                </h3>
+
+                <p style="
+                    white-space:pre-line;
+                    color:var(--muted);
+                    line-height:1.7;
+                    margin-top:10px">
+
+                    ${escapeHTML(
+                        result.ai_analysis || ""
+                    )}
+
+                </p>
+
+            </div>
+
+            <!-- 🚨 Early Intervention -->
+
+            <div style="
+                margin-top:20px;
+                padding:18px;
+                border:1px solid var(--border);
+                border-radius:12px">
+
+                <h3>
+                    🚨 Early Intervention
+                </h3>
+
+                <p style="
+                    color:var(--muted);
+                    font-size:12px;
+                    margin-top:8px">
+
+                    Recommended faculty actions based on
+                    the student's current academic risk.
+
+                </p>
+
+                <div style="
+                    margin-top:14px;
+                    line-height:1.8;
+                    font-size:13px">
+
+                    ${
+                        risk === "High"
+                        ? `
+                            <div>
+                                🔴 <strong>High Priority:</strong>
+                                Immediate faculty intervention required.
+                            </div>
+
+                            <div>
+                                👨‍🏫 Schedule a one-to-one meeting with the student.
+                            </div>
+
+                            <div>
+                                📚 Create a focused improvement plan.
+                            </div>
+
+                            <div>
+                                📅 Monitor attendance and assignments regularly.
+                            </div>
+
+                            <div>
+                                📞 Contact the student/parent if performance does not improve.
+                            </div>
+                        `
+                        : risk === "Medium"
+                        ? `
+                            <div>
+                                🟡 <strong>Medium Priority:</strong>
+                                Student should be monitored closely.
+                            </div>
+
+                            <div>
+                                👨‍🏫 Discuss academic difficulties with the student.
+                            </div>
+
+                            <div>
+                                📚 Encourage a regular study schedule.
+                            </div>
+
+                            <div>
+                                📅 Review attendance and assignment progress weekly.
+                            </div>
+                        `
+                        : `
+                            <div>
+                                🟢 <strong>Low Priority:</strong>
+                                No immediate intervention required.
+                            </div>
+
+                            <div>
+                                👍 Continue regular academic monitoring.
+                            </div>
+
+                            <div>
+                                📚 Encourage the student to maintain current performance.
+                            </div>
+                        `
+                    }
+
+                </div>
+
+            </div>
+
+        `;
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "AI Analysis Error:",
+            error
+        );
+
+
+        content.innerHTML = `
+
+            <div style="
+                text-align:center;
+                padding:30px">
+
+                <div style="
+                    font-size:45px">
+
+                    ❌
+
+                </div>
+
+                <h3 style="
+                    margin-top:12px">
+
+                    AI Analysis Failed
+
+                </h3>
+
+                <p style="
+                    color:var(--muted);
+                    margin-top:12px;
+                    line-height:1.6">
+
+                    ${escapeHTML(
+                        error.message
+                    )}
+
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+function closeAIModal(){
+
+    document.getElementById(
+        "aiModal"
+    ).classList.remove("show");
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function scrollToStudents(){
+
+    document.getElementById(
+        "studentsSection"
+    ).scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+function showRiskOnly(){
+
+    document.getElementById(
+        "riskFilter"
+    ).value =
+        "High";
+
+    scrollToStudents();
+
+    renderStudents();
+
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+function toggleDarkMode(){
+
+    document.body.classList.toggle(
+        "dark"
+    );
+
+
+    const isDark =
+        document.body.classList.contains(
+            "dark"
+        );
+
+
+    localStorage.setItem(
+        "darkMode",
+        isDark
+    );
+
+
+    updateDarkIcons();
+
+}
+
+
+function updateDarkIcons(){
+
+    const isDark =
+        document.body.classList.contains(
+            "dark"
+        );
+
+
+    const icon =
+        isDark
+        ? "☀️"
+        : "🌙";
+
+
+    const darkIcon =
+        document.getElementById(
+            "darkIcon"
+        );
+
+
+    const topDarkIcon =
+        document.getElementById(
+            "topDarkIcon"
+        );
+
+
+    if(darkIcon)
+        darkIcon.textContent = icon;
+
+
+    if(topDarkIcon)
+        topDarkIcon.textContent = icon;
+
+}
+
+
+if(
+    localStorage.getItem(
+        "darkMode"
+    ) === "true"
+){
+
+    document.body.classList.add(
+        "dark"
+    );
+
+}
+
+
+updateDarkIcons();
+
+
+/* =====================================================
+   CSV EXPORT
+===================================================== */
+
+function exportCSV(){
+
+    let csv =
+        "Name,Roll No,Attendance,Marks,Assignments,Risk Score,Risk Status,Department\n";
+
+
+    students.forEach(student => {
+
+        const result =
+            calculateRisk(student);
+
+
+        csv +=
+            `"${student.name}",` +
+            `"${student.roll}",` +
+            `${student.attendance},` +
+            `${student.marks},` +
+            `${student.assignments},` +
+            `${result.score},` +
+            `"${result.risk}",` +
+            `"${student.department}"\n`;
+
+    });
+
+
+    const blob =
+        new Blob(
+            [csv],
+            {
+                type:"text/csv"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const a =
+        document.createElement(
+            "a"
+        );
+
+
+    a.href = url;
+
+    a.download =
+        "student_academic_risk_report.csv";
+
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+
+
+    URL.revokeObjectURL(url);
+
+
+    showToast(
+        "CSV report exported!"
+    );
+
+}
+
+
+/* =====================================================
+   MODAL CLOSE
+===================================================== */
+
+document.addEventListener(
+    "click",
+    function(e){
+
+        const studentModal =
+            document.getElementById(
+                "studentModal"
+            );
+
+        const aiModal =
+            document.getElementById(
+                "aiModal"
+            );
+
+
+        if(e.target === studentModal)
+            closeModal();
+
+
+        if(e.target === aiModal)
+            closeAIModal();
+
+    }
+);
+
+
+/* =====================================================
+   PROFESSOR NAME
+===================================================== */
+
+const professorName =
+    "{{ session.get('professor_name', 'Professor') }}";
+
+
+if(
+    professorName &&
+    professorName !== "Professor"
+){
+
+    document.getElementById(
+        "welcomeTitle"
+    ).textContent =
+        "Good Morning, " +
+        professorName +
+        " 👋";
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showToast(message){
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        () => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        2500
+    );
+
+}
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
+
+loadStudents();
+
+async function showPredictionHistory(id){
+
+    const student = students.find(
+        s => Number(s.id) === Number(id)
+    );
+
+    if(!student){
+
+        showToast("Student not found!");
+
+        return;
+    }
+
+    const content =
+        document.getElementById("aiResultContent");
+
+    const modal =
+        document.getElementById("aiModal");
+
+    content.innerHTML = `
+        <div style="
+            text-align:center;
+            padding:25px">
+
+            <div style="font-size:40px">
+                📜
+            </div>
+
+            <h3 style="margin-top:10px">
+                Loading Prediction History...
+            </h3>
+
+        </div>
+    `;
+
+    modal.classList.add("show");
+
+    try{
+
+        const response = await fetch(
+            "/prediction-history/" + Number(id)
+        );
+
+        const history = await response.json();
+
+        if(!response.ok){
+
+            throw new Error(
+                history.error ||
+                "Unable to load history"
+            );
+
+        }
+
+        if(!Array.isArray(history) || history.length === 0){
+
+            content.innerHTML = `
+
+                <div style="
+                    text-align:center;
+                    padding:30px">
+
+                    <div style="font-size:45px">
+                        📭
+                    </div>
+
+                    <h3 style="margin-top:10px">
+                        No Prediction History
+                    </h3>
+
+                    <p style="
+                        color:var(--muted);
+                        margin-top:8px">
+
+                        ${escapeHTML(student.name)}
+                        has no previous AI predictions.
+
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        let historyHTML = `
+
+            <div style="margin-bottom:20px">
+
+                <h2>
+                    📜 Prediction History
+                </h2>
+
+                <p style="
+                    color:var(--muted);
+                    font-size:12px;
+                    margin-top:5px">
+
+                    ${escapeHTML(student.name)}
+                    • ${escapeHTML(student.roll)}
+
+                </p>
+
+            </div>
+
+        `;
+
+
+        history.forEach((item, index) => {
+
+            let riskBackground;
+            let riskColor;
+
+            if(item.risk === "High"){
+
+                riskBackground = "#fee2e2";
+                riskColor = "#dc2626";
+
+            }
+            else if(item.risk === "Medium"){
+
+                riskBackground = "#fef3c7";
+                riskColor = "#d97706";
+
+            }
+            else{
+
+                riskBackground = "#dcfce7";
+                riskColor = "#16a34a";
+
+            }
+
+
+            historyHTML += `
+
+                <div style="
+                    border:1px solid var(--border);
+                    border-radius:14px;
+                    padding:16px;
+                    margin-bottom:12px">
+
+                    <div style="
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                        gap:10px">
+
+                        <strong>
+                            Prediction #${history.length - index}
+                        </strong>
+
+                        <span style="
+                            padding:5px 9px;
+                            border-radius:20px;
+                            background:${riskBackground};
+                            color:${riskColor};
+                            font-size:11px;
+                            font-weight:bold">
+
+                            ${escapeHTML(item.risk)} Risk
+
+                        </span>
+
+                    </div>
+
+
+                    <p style="
+                        color:var(--muted);
+                        font-size:10px;
+                        margin-top:6px">
+
+                        ${escapeHTML(
+                            item.predicted_at || ""
+                        )}
+
+                    </p>
+
+
+                    <div class="metric-grid"
+                         style="margin-top:14px">
+
+                        <div class="metric">
+
+                            <small>
+                                Attendance
+                            </small>
+
+                            <strong>
+                                ${item.attendance}%
+                            </strong>
+
+                        </div>
+
+
+                        <div class="metric">
+
+                            <small>
+                                Marks
+                            </small>
+
+                            <strong>
+                                ${item.marks}%
+                            </strong>
+
+                        </div>
+
+
+                        <div class="metric">
+
+                            <small>
+                                Assignments
+                            </small>
+
+                            <strong>
+                                ${item.assignments}%
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+
+        historyHTML += `
+
+            <div style="
+                text-align:right;
+                margin-top:18px">
+
+                <button
+                    class="btn secondary"
+                    onclick="closeAIModal()">
+
+                    Close
+
+                </button>
+
+            </div>
+
+        `;
+
+    // 📈 Performance Trend
+historyHTML += `
+
+    <div style="
+        margin-top:20px;
+        padding:16px;
+        border:1px solid var(--border);
+        border-radius:14px">
+
+        <h3 style="font-size:15px">
+            📈 Performance Trend
+        </h3>
+
+        <p style="
+            color:var(--muted);
+            font-size:11px;
+            margin-top:5px">
+
+            Performance across previous AI predictions
+
+        </p>
+
+        <div style="
+            margin-top:16px;
+            display:grid;
+            gap:14px">
+
+`;
+
+history.forEach((item, index) => {
+
+    const attendance =
+        Number(item.attendance) || 0;
+
+    const marks =
+        Number(item.marks) || 0;
+
+    const assignments =
+        Number(item.assignments) || 0;
+
+    historyHTML += `
+
+        <div>
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                font-size:11px;
+                margin-bottom:5px">
+
+                <strong>
+                    Prediction #${history.length - index}
+                </strong>
+
+                <span style="color:var(--muted)">
+                    ${escapeHTML(item.predicted_at || "")}
+                </span>
+
+            </div>
+
+            <div style="
+                display:grid;
+                grid-template-columns:80px 1fr;
+                gap:8px;
+                align-items:center">
+
+                <span style="font-size:10px">
+                    Attendance
+                </span>
+
+                <div style="
+                    height:8px;
+                    background:var(--border);
+                    border-radius:10px;
+                    overflow:hidden">
+
+                    <div style="
+                        height:100%;
+                        width:${Math.min(attendance,100)}%;
+                        background:#2563eb;
+                        border-radius:10px">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div style="
+                display:grid;
+                grid-template-columns:80px 1fr;
+                gap:8px;
+                align-items:center;
+                margin-top:7px">
+
+                <span style="font-size:10px">
+                    Marks
+                </span>
+
+                <div style="
+                    height:8px;
+                    background:var(--border);
+                    border-radius:10px;
+                    overflow:hidden">
+
+                    <div style="
+                        height:100%;
+                        width:${Math.min(marks,100)}%;
+                        background:#7c3aed;
+                        border-radius:10px">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div style="
+                display:grid;
+                grid-template-columns:80px 1fr;
+                gap:8px;
+                align-items:center;
+                margin-top:7px">
+
+                <span style="font-size:10px">
+                    Assignments
+                </span>
+
+                <div style="
+                    height:8px;
+                    background:var(--border);
+                    border-radius:10px;
+                    overflow:hidden">
+
+                    <div style="
+                        height:100%;
+                        width:${Math.min(assignments,100)}%;
+                        background:#16a34a;
+                        border-radius:10px">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+});
+
+historyHTML += `
+
+        </div>
+
+    </div>
+
+`;
+        content.innerHTML = historyHTML;
+
+    }
+    catch(error){
+
+        console.error(
+            "History Error:",
+            error
+        );
+
+        content.innerHTML = `
+
+            <div style="
+                text-align:center;
+                padding:30px">
+
+                <div style="font-size:45px">
+                    ❌
+                </div>
+
+                <h3 style="margin-top:10px">
+                    History Loading Failed
+                </h3>
+
+                <p style="
+                    color:var(--muted);
+                    margin-top:10px">
+
+                    ${escapeHTML(error.message)}
+
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
