@@ -829,6 +829,27 @@ td{
 
 <body>
 
+<!-- ================= INQUIRY BUTTON ================= -->
+
+<button
+    onclick="openInquiry()"
+    style="
+        position:fixed;
+        right:20px;
+        bottom:20px;
+        z-index:9999;
+        padding:12px 18px;
+        border:none;
+        border-radius:25px;
+        background:#2563eb;
+        color:white;
+        font-weight:600;
+        cursor:pointer;
+        box-shadow:0 5px 15px rgba(0,0,0,0.2);
+    ">
+    📩 Inquiry
+</button>
+
 <!-- ================= SIDEBAR ================= -->
 
 <aside class="sidebar">
@@ -1634,6 +1655,65 @@ td{
 
 
 <script>
+
+function openInquiry() {
+    document.getElementById("inquiryModal").style.display = "flex";
+}
+async function submitInquiry() {
+
+    const name =
+        document.getElementById("inquiryName").value.trim();
+
+    const email =
+        document.getElementById("inquiryEmail").value.trim();
+
+    const message =
+        document.getElementById("inquiryMessage").value.trim();
+
+    if (!name || !email || !message) {
+        alert("Please fill all fields.");
+        return;
+    }
+
+    try {
+
+        const response = await fetch("/inquiry", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                message: message
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(result.error || "Inquiry submission failed.");
+            return;
+        }
+
+        alert("✅ " + result.message);
+
+        document.getElementById("inquiryName").value = "";
+        document.getElementById("inquiryEmail").value = "";
+        document.getElementById("inquiryMessage").value = "";
+
+        closeInquiry();
+
+    } catch (error) {
+
+        console.error(error);
+        alert("❌ Server error. Please try again.");
+
+    }
+}
+function closeInquiry() {
+    document.getElementById("inquiryModal").style.display = "none";
+}
 
 /* =====================================================
    GLOBAL DATA
@@ -3943,6 +4023,83 @@ historyHTML += `
 }
 
 </script>
+
+<!-- ================= INQUIRY MODAL ================= -->
+
+<div id="inquiryModal" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.55);
+    z-index:10000;
+    align-items:center;
+    justify-content:center;
+">
+
+    <div style="
+        width:90%;
+        max-width:450px;
+        background:white;
+        padding:25px;
+        border-radius:15px;
+        box-shadow:0 10px 30px rgba(0,0,0,0.3);
+    ">
+
+        <h2 style="margin-top:0;">📩 Send Inquiry</h2>
+
+        <input
+            id="inquiryName"
+            type="text"
+            placeholder="Your Name"
+            style="width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;"
+        >
+
+        <input
+            id="inquiryEmail"
+            type="email"
+            placeholder="Email"
+            style="width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;"
+        >
+
+        <textarea
+            id="inquiryMessage"
+            placeholder="Write your inquiry..."
+            rows="5"
+            style="width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;"
+        ></textarea>
+
+        <button
+            onclick="submitInquiry()"
+            style="
+                width:100%;
+                padding:12px;
+                border:none;
+                border-radius:8px;
+                background:#2563eb;
+                color:white;
+                font-weight:bold;
+                cursor:pointer;
+                margin-top:8px;
+            ">
+            Send Inquiry
+        </button>
+
+        <button
+            onclick="closeInquiry()"
+            style="
+                width:100%;
+                padding:10px;
+                border:none;
+                background:#eee;
+                border-radius:8px;
+                cursor:pointer;
+                margin-top:8px;
+            ">
+            Cancel
+        </button>
+
+    </div>
+</div>
 
 </body>
 </html>

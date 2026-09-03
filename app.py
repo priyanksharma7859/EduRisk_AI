@@ -60,6 +60,55 @@ def home():
 
     return render_template("index.html")
 
+@app.route("/inquiry", methods=["POST"])
+def submit_inquiry():
+
+    if "professor_id" not in session:
+        return jsonify({"error": "Please login first"}), 401
+
+    data = request.get_json()
+
+    name = data.get("name", "").strip()
+    email = data.get("email", "").strip()
+    message = data.get("message", "").strip()
+
+    if not name or not email or not message:
+        return jsonify({
+            "error": "All fields are required"
+        }), 400
+
+    conn = get_db()
+
+    try:
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            INSERT INTO inquiries
+            (professor_id, name, email, message)
+            VALUES (%s, %s, %s, %s)
+        """, (
+            session["professor_id"],
+            name,
+            email,
+            message
+        ))
+
+        conn.commit()
+
+        return jsonify({
+            "success": True,
+            "message": "Inquiry submitted successfully!"
+        })
+
+    except Exception as e:
+        conn.rollback()
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+    finally:
+        conn.close()
 
 # =====================================================
 # REGISTER
