@@ -1729,10 +1729,9 @@ let students = [];
 async function loadStudents(){
 
     try{
-
-        const response =
-            await fetch("/students");
-
+       
+        const response = await fetch("/students");
+        
         if(response.status === 401){
 
             window.location.href =
