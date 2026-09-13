@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 from email.message import EmailMessage
-
+import secrets
+from datetime import datetime, timedelta
 
 # =====================================================
 # LOAD ENVIRONMENT VARIABLES
@@ -104,6 +105,12 @@ def login_required():
 
     return "professor_id" in session
 
+# =====================================================
+# PASSWORD RESET OTP
+# =====================================================
+
+def generate_reset_otp():
+    return str(secrets.randbelow(900000) + 100000)
 
 # =====================================================
 # HOME
@@ -329,7 +336,397 @@ def register():
         "register.html"
     )
 
+# =====================================================
+# FORGOT PASSWORD
+# =====================================================
 
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+
+    if request.method == "POST":
+
+        mobile = request.form.get(
+            "mobile",
+            ""
+        ).strip()
+
+        if not mobile:
+
+            return "Mobile number is required!", 400
+
+        conn = get_db()
+
+        try:
+
+            cursor = conn.cursor()
+
+            cursor.execute(
+                """
+                SELECT id, mobile
+                FROM professors
+                WHERE mobile = %s
+                """,
+                (mobile,)
+            )
+
+            professor = cursor.fetchone()
+
+        finally:
+
+            conn.close()
+
+        if professor is None:
+
+            return "Registered mobile number not found!", 404
+
+        # Generate 6-digit OTP
+        otp = generate_reset_otp()
+
+        print("PASSWORD RESET OTP:", otp)
+
+        # OTP valid for 10 minutes
+        expires_at = datetime.utcnow() + timedelta(minutes=10)
+
+        otp_hash = generate_password_hash(otp)
+
+        conn = get_db()
+
+        try:
+
+            cursor = conn.cursor()
+
+            cursor.execute(
+                """
+                INSERT INTO password_reset_otps
+                (
+                    professor_id,
+                    mobile,
+                    otp_hash,
+                    expires_at
+                )
+                VALUES (%s, %s, %s, %s)
+                """,
+                (
+                    professor["id"],
+                    mobile,
+                    otp_hash,
+                    expires_at
+                )
+            )
+
+            conn.commit()
+
+        except Exception as e:
+
+            conn.rollback()
+
+            print(
+                "OTP database error:",
+                repr(e)
+            )
+
+            return "Failed to create OTP: " + str(e), 500
+
+        finally:
+
+            conn.close()
+
+        return "OTP generated successfully. Continue to OTP verification."
+
+    return render_template(
+        "forgot_password.html"
+    )
+# =====================================================
+# VERIFY PASSWORD RESET OTP
+# =====================================================
+
+@app.route("/verify-reset-otp", methods=["POST"])
+def verify_reset_otp():
+
+    data = request.get_json(silent=True) or {}
+
+    mobile = str(
+        data.get("mobile", "")
+    ).strip()
+
+    otp = str(
+        data.get("otp", "")
+    ).strip()
+
+    if not mobile or not otp:
+
+        return jsonify({
+            "error": "Mobile number and OTP are required"
+        }), 400
+
+    conn = get_db()
+
+    try:
+
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM password_reset_otps
+            WHERE mobile = %s
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (mobile,)
+        )
+
+        reset_data = cursor.fetchone()
+
+    finally:
+
+        conn.close()
+
+    if reset_data is None:
+
+        return jsonify({
+            "error": "OTP not found"
+        }), 404
+
+    if datetime.utcnow() > reset_data["expires_at"].replace(
+        tzinfo=None
+    ):
+
+        return jsonify({
+            "error": "OTP has expired"
+        }), 400
+
+    if reset_data["attempts"] >= 5:
+
+        return jsonify({
+            "error": "Too many OTP attempts"
+        }), 429
+
+    if not check_password_hash(
+        reset_data["otp_hash"],
+        otp
+    ):
+
+        conn = get_db()
+
+        try:
+
+            cursor = conn.cursor()
+
+            cursor.execute(
+                """
+                UPDATE password_reset_otps
+                SET attempts = attempts + 1
+                WHERE id = %s
+                """,
+                (reset_data["id"],)
+            )
+
+            conn.commit()
+
+        finally:
+
+            conn.close()
+
+        return jsonify({
+            "error": "Invalid OTP"
+        }), 400
+
+    conn = get_db()
+
+    try:
+
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            UPDATE password_reset_otps
+            SET verified = TRUE
+            WHERE id = %s
+            """,
+            (reset_data["id"],)
+        )
+
+        conn.commit()
+
+    finally:
+
+        conn.close()
+
+    session["password_reset_id"] = reset_data["id"]
+
+    return jsonify({
+        "success": True,
+        "message": "OTP verified successfully"
+    })
+# =====================================================
+# RESET PASSWORD PAGE
+# =====================================================
+
+@app.route("/reset-password-page")
+def reset_password_page():
+
+    reset_id = session.get("password_reset_id")
+
+    if not reset_id:
+
+        return redirect(
+            url_for("forgot_password")
+        )
+
+    conn = get_db()
+
+    try:
+
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT verified
+            FROM password_reset_otps
+            WHERE id = %s
+            """,
+            (reset_id,)
+        )
+
+        reset_data = cursor.fetchone()
+
+    finally:
+
+        conn.close()
+
+
+    if not reset_data or not reset_data["verified"]:
+
+        session.pop(
+            "password_reset_id",
+            None
+        )
+
+        return redirect(
+            url_for("forgot_password")
+        )
+
+
+    return render_template(
+        "reset_password.html"
+    )
+# =====================================================
+# RESET PASSWORD
+# =====================================================
+
+@app.route("/reset-password", methods=["POST"])
+def reset_password():
+
+    data = request.get_json(silent=True) or {}
+
+    new_password = str(
+        data.get("new_password", "")
+    ).strip()
+
+    confirm_password = str(
+        data.get("confirm_password", "")
+    ).strip()
+
+    if not new_password or not confirm_password:
+
+        return jsonify({
+            "error": "New password and confirm password are required"
+        }), 400
+
+    if new_password != confirm_password:
+
+        return jsonify({
+            "error": "Passwords do not match"
+        }), 400
+
+    if len(new_password) < 6:
+
+        return jsonify({
+            "error": "Password must be at least 6 characters"
+        }), 400
+
+    reset_id = session.get("password_reset_id")
+
+    if not reset_id:
+
+        return jsonify({
+            "error": "OTP verification required"
+        }), 401
+
+    conn = get_db()
+
+    try:
+
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT professor_id, verified
+            FROM password_reset_otps
+            WHERE id = %s
+            """,
+            (reset_id,)
+        )
+
+        reset_data = cursor.fetchone()
+
+        if reset_data is None:
+
+            return jsonify({
+                "error": "Password reset request not found"
+            }), 404
+
+        if not reset_data["verified"]:
+
+            return jsonify({
+                "error": "OTP verification required"
+            }), 401
+
+        hashed_password = generate_password_hash(
+            new_password
+        )
+
+        cursor.execute(
+            """
+            UPDATE professors
+            SET password = %s
+            WHERE id = %s
+            """,
+            (
+                hashed_password,
+                reset_data["professor_id"]
+            )
+        )
+
+        conn.commit()
+
+    except Exception as e:
+
+        conn.rollback()
+
+        print(
+            "Password reset error:",
+            repr(e)
+        )
+
+        return jsonify({
+            "error": "Failed to reset password: " + str(e)
+        }), 500
+
+    finally:
+
+        conn.close()
+
+    session.pop(
+        "password_reset_id",
+        None
+    )
+
+    return jsonify({
+        "success": True,
+        "message": "Password reset successfully. Please login."
+    })
 # =====================================================
 # LOGIN
 # =====================================================
