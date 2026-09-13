@@ -849,7 +849,21 @@ td{
     ">
     📩 Inquiry
 </button>
-
+<button onclick="openSupport()" style="
+    position: fixed;
+    bottom: 75px;
+    right: 20px;
+    z-index: 9999;
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+">
+    🆘 Support / AI Help
+</button>
 <!-- ================= SIDEBAR ================= -->
 
 <aside class="sidebar">
@@ -1655,7 +1669,208 @@ td{
 
 
 <script>
+function openSupport() {
+    document.getElementById("supportModal").style.display = "flex";
+}
 
+function closeSupport() {
+    document.getElementById("supportModal").style.display = "none";
+}
+function showSupportAnswer(type) {
+
+    const answer = document.getElementById("supportAnswer");
+
+    const answers = {
+
+        about:
+            "<strong>ℹ️ About EduRisk AI</strong><br><br>" +
+            "EduRisk AI is an AI-powered academic risk management system designed to help professors identify students who may be academically at risk.<br><br>" +
+            "<b>🎯 Main Purpose:</b><br>" +
+            "To analyze student academic data and provide risk prediction with useful recommendations.<br><br>" +
+            "<b>📊 Main Features:</b><br>" +
+            "• Student Management<br>" +
+            "• Attendance & Marks Analysis<br>" +
+            "• Assignment Analysis<br>" +
+            "• AI Risk Prediction<br>" +
+            "• Personalized Recommendations<br>" +
+            "• Prediction History<br>" +
+            "• Support / AI Help<br>" +
+            "• Inquiry / Contact<br>" +
+            "• Forgot Password with Mobile OTP<br><br>" +
+            "<b>🤖 AI:</b><br>" +
+            "The system uses a Machine Learning model to analyze academic data and identify the student's risk level."
+        website:
+            "<strong>🌐 EduRisk AI Website</strong><br><br>" +
+            "EduRisk AI is an academic risk management platform for professors and faculty members.<br><br>" +
+            "• Add and manage student details<br>" +
+            "• Manage attendance, marks and assignments<br>" +
+            "• Perform AI-based academic risk prediction<br>" +
+            "• Get personalized recommendations<br>" +
+            "• View prediction history<br>" +
+            "• Manage student academic information<br><br>" +
+            "Login to the dashboard to use these features.",
+
+        prediction:
+            "<strong>🤖 AI Prediction Help</strong><br><br>" +
+            "EduRisk AI analyzes the student's attendance, marks and assignments using a Machine Learning model.<br><br>" +
+            "The system predicts the student's academic risk level such as:<br>" +
+            "🟢 Low Risk<br>" +
+            "🟡 Medium Risk<br>" +
+            "🔴 High Risk<br><br>" +
+            "The system also provides personalized recommendations to help faculty take appropriate academic action.",
+
+        login:
+            "<strong>🔐 Login / Account Help</strong><br><br>" +
+            "Use your registered email/mobile number and password to log in.<br><br>" +
+            "If you forgot your password:<br>" +
+            "1. Open Forgot Password<br>" +
+            "2. Enter your registered mobile number<br>" +
+            "3. Verify the OTP<br>" +
+            "4. Enter a new password<br>" +
+            "5. Login again with the new password.",
+
+        technical:
+            "<strong>⚙️ Technical Support</strong><br><br>" +
+            "If any dashboard feature, student management, AI prediction or account function is not working properly, first refresh the page and try again.<br><br>" +
+            "If the problem continues, use <b>Contact / Submit Inquiry</b> and describe the problem clearly so the support/admin team can review it."
+    };
+
+    answer.innerHTML =
+        answers[type] ||
+        "Please select a support option.";
+
+    answer.style.display = "block";
+}
+function askSupportAI() {
+
+    const question = document.getElementById("supportQuestion").value
+        .trim()
+        .toLowerCase();
+
+    const answer = document.getElementById("supportAnswer");
+
+    if (!question) {
+        answer.innerHTML = "💬 Please type your question first.";
+        answer.style.display = "block";
+        return;
+    }
+
+    let response = "";
+
+    if (
+        question.includes("what is edurisk") ||
+        question.includes("what is edurisk ai") ||
+        question.includes("about edurisk") ||
+        question.includes("website")
+    ) {
+        response =
+            "<strong>🤖 EduRisk AI</strong><br><br>" +
+            "EduRisk AI is an academic risk management platform designed for professors and faculty members.<br><br>" +
+            "It helps manage students, analyze academic performance and identify students who may be at academic risk.";
+    }
+
+    else if (
+        question.includes("how ai works") ||
+        question.includes("how does ai work") ||
+        question.includes("prediction") ||
+        question.includes("predict") ||
+        question.includes("risk level")
+    ) {
+        response =
+            "<strong>🤖 How AI Prediction Works</strong><br><br>" +
+            "The Machine Learning model analyzes three important academic factors:<br><br>" +
+            "📊 Attendance<br>" +
+            "📝 Marks<br>" +
+            "📚 Assignments<br><br>" +
+            "Based on these inputs, EduRisk AI predicts the student's academic risk level and provides recommendations.";
+    }
+
+    else if (
+        question.includes("add student") ||
+        question.includes("student") ||
+        question.includes("manage student")
+    ) {
+        response =
+            "<strong>👨‍🎓 Student Management</strong><br><br>" +
+            "You can add and manage student academic information from the dashboard, including attendance, marks, assignments and other available student details.";
+    }
+
+    else if (
+        question.includes("forgot password") ||
+        question.includes("reset password") ||
+        question.includes("otp") ||
+        question.includes("login")
+    ) {
+        response =
+            "<strong>🔐 Login & Password Help</strong><br><br>" +
+            "If you forgot your password:<br><br>" +
+            "1️⃣ Open Forgot Password<br>" +
+            "2️⃣ Enter your registered mobile number<br>" +
+            "3️⃣ Verify the OTP<br>" +
+            "4️⃣ Create a new password<br>" +
+            "5️⃣ Login again.";
+    }
+
+    else if (
+        question.includes("recommendation") ||
+        question.includes("suggestion") ||
+        question.includes("what should i do")
+    ) {
+        response =
+            "<strong>💡 Personalized Recommendations</strong><br><br>" +
+            "EduRisk AI provides recommendations based on the student's academic risk and performance indicators.<br><br>" +
+            "Faculty can use these recommendations to identify students who may need additional academic attention.";
+    }
+
+    else if (
+        question.includes("history") ||
+        question.includes("previous prediction")
+    ) {
+        response =
+            "<strong>📜 Prediction History</strong><br><br>" +
+            "Prediction History allows you to view previously generated student risk predictions and related academic information.";
+    }
+
+    else if (
+        question.includes("technical") ||
+        question.includes("error") ||
+        question.includes("problem") ||
+        question.includes("not working")
+    ) {
+        response =
+            "<strong>⚙️ Technical Support</strong><br><br>" +
+            "Please refresh the page and try again.<br><br>" +
+            "If the problem continues, use <b>Contact / Submit Inquiry</b> and describe the issue clearly.";
+    }
+
+    else if (
+        question.includes("hello") ||
+        question.includes("hi") ||
+        question.includes("hey")
+    ) {
+        response =
+            "<strong>👋 Hello!</strong><br><br>" +
+            "Welcome to EduRisk AI Support.<br><br>" +
+            "You can ask me about the website, AI prediction, students, recommendations, prediction history, login, OTP or technical problems.";
+    }
+
+    else {
+        response =
+            "<strong>🤖 EduRisk AI Support</strong><br><br>" +
+            "I can help you with:<br><br>" +
+            "🌐 Website Information<br>" +
+            "🤖 AI Risk Prediction<br>" +
+            "👨‍🎓 Student Management<br>" +
+            "💡 Recommendations<br>" +
+            "📜 Prediction History<br>" +
+            "🔐 Login & OTP<br>" +
+            "⚙️ Technical Support<br><br>" +
+            "Please ask your question related to EduRisk AI.";
+    }
+
+    answer.innerHTML = response;
+    answer.style.display = "block";
+}
 function openInquiry() {
     document.getElementById("inquiryModal").style.display = "flex";
 }
@@ -4095,6 +4310,160 @@ historyHTML += `
                 margin-top:8px;
             ">
             Cancel
+        </button>
+
+    </div>
+</div>
+<!-- ================= SUPPORT / AI HELP MODAL ================= -->
+<div id="supportModal" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.65);
+    z-index:10001;
+    align-items:center;
+    justify-content:center;
+">
+
+    <div style="
+        width:90%;
+        max-width:520px;
+        background:#111827;
+        color:white;
+        border-radius:16px;
+        padding:25px;
+        box-shadow:0 20px 50px rgba(0,0,0,0.4);
+    ">
+
+        <h2 style="margin-top:0;">
+            🆘 EduRisk AI Support
+        </h2>
+
+        <p style="color:#cbd5e1;">
+            How can we help you?
+        </p>
+
+        <button onclick="showSupportAnswer('website')" style="
+            width:100%;
+            margin:6px 0;
+            padding:12px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+        ">
+            🌐 Website Help
+        </button>
+
+        <button onclick="showSupportAnswer('about')" style="
+             width:100%;
+             margin:6px 0;
+            padding:12px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+        ">
+            ℹ️ About EduRisk AI
+        </button>
+        <button onclick="showSupportAnswer('prediction')" style="
+            width:100%;
+            margin:6px 0;
+            padding:12px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+        ">
+            🤖 AI Prediction Help
+        </button>
+
+        <button onclick="showSupportAnswer('login')" style="
+            width:100%;
+            margin:6px 0;
+            padding:12px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+        ">
+            🔐 Login / Account Help
+        </button>
+
+        <button onclick="showSupportAnswer('technical')" style="
+            width:100%;
+            margin:6px 0;
+            padding:12px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+        ">
+            ⚙️ Technical Problem
+        </button>
+
+        <div id="supportAnswer" style="
+            margin-top:15px;
+            padding:14px;
+            background:#1f2937;
+            border-radius:10px;
+            display:none;
+            line-height:1.5;
+        "></div>
+
+        <div style="margin-top:15px;">
+
+    <input
+        type="text"
+        id="supportQuestion"
+        placeholder="💬 Ask EduRisk AI your question..."
+        style="
+            width:100%;
+            box-sizing:border-box;
+            padding:12px;
+            border-radius:8px;
+            border:1px solid #374151;
+            background:#0f172a;
+            color:white;
+            outline:none;
+        "
+    >
+
+    <button onclick="askSupportAI()" style="
+        width:100%;
+        margin-top:8px;
+        padding:12px;
+        background:#16a34a;
+        color:white;
+        border:none;
+        border-radius:8px;
+        cursor:pointer;
+        font-weight:bold;
+    ">
+        🤖 Ask AI
+    </button>
+
+</div>
+        <button onclick="openInquiry(); closeSupport();" style="
+            width:100%;
+            margin-top:15px;
+            padding:12px;
+            background:#2563eb;
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight:bold;
+        ">
+            📩 Contact / Submit Inquiry
+        </button>
+
+        <button onclick="closeSupport()" style="
+            width:100%;
+            margin-top:8px;
+            padding:10px;
+            background:#374151;
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+        ">
+            Close
         </button>
 
     </div>
