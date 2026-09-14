@@ -4328,12 +4328,14 @@ historyHTML += `
     <div style="
         width:90%;
         max-width:520px;
+        max-height:85vh;
+        overflow-y:auto;
         background:#111827;
         color:white;
         border-radius:16px;
-        padding:25px;
+        padding:20px;
         box-shadow:0 20px 50px rgba(0,0,0,0.4);
-    ">
+">
 
         <h2 style="margin-top:0;">
             🆘 EduRisk AI Support
@@ -4404,7 +4406,10 @@ historyHTML += `
             border-radius:10px;
             display:none;
             line-height:1.5;
-        "></div>
+            max-height:220px;
+            overflow-y:auto;
+            box-sizing:border-box;
+"></div>
 
         <div style="margin-top:15px;">
 
@@ -4455,15 +4460,16 @@ historyHTML += `
 
         <button onclick="closeSupport()" style="
             width:100%;
-            margin-top:8px;
-            padding:10px;
+            margin-top:12px;
+            padding:12px;
             background:#374151;
             color:white;
             border:none;
             border-radius:8px;
             cursor:pointer;
-        ">
-            Close
+            font-weight:bold;
+">
+         ✕ Close Support
         </button>
 
     </div>
