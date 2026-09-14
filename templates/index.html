@@ -4235,7 +4235,85 @@ historyHTML += `
     }
 
 }
+function askSupportAI() {
 
+    const question =
+        document.getElementById("supportQuestion").value
+        .trim()
+        .toLowerCase();
+
+    const answer =
+        document.getElementById("supportAnswer");
+
+    if (!question) {
+        answer.style.display = "block";
+        answer.innerHTML =
+            "⚠️ Please enter your question.";
+        return;
+    }
+
+    let response = "";
+
+    if (
+        question.includes("forgot") &&
+        question.includes("password")
+    ) {
+        response =
+            "<strong>🔐 Forgot Password Help</strong><br><br>" +
+            "If you forgot your password, use the Forgot Password option on the Login page.<br><br>" +
+            "1. Enter your registered mobile number.<br>" +
+            "2. Receive the OTP.<br>" +
+            "3. Verify the OTP.<br>" +
+            "4. Set a new password.<br>" +
+            "5. Login again with your new password.";
+    }
+
+    else if (
+        question.includes("risk") &&
+        question.includes("prediction")
+    ) {
+        response =
+            "<strong>🤖 AI Risk Prediction</strong><br><br>" +
+            "EduRisk AI analyzes student attendance, marks and assignment performance to identify academic risk.";
+    }
+
+    else if (
+        question.includes("add") &&
+        question.includes("student")
+    ) {
+        response =
+            "<strong>👨‍🎓 Add Student</strong><br><br>" +
+            "Open the Add Student option, enter the student's academic details and save the record.";
+    }
+
+    else if (
+        question.includes("prediction history")
+    ) {
+        response =
+            "<strong>📜 Prediction History</strong><br><br>" +
+            "Prediction History shows previous AI risk predictions and the student's academic indicators.";
+    }
+
+    else if (
+        question.includes("technical") ||
+        question.includes("problem") ||
+        question.includes("error")
+    ) {
+        response =
+            "<strong>⚙️ Technical Help</strong><br><br>" +
+            "Please check your internet connection and try again. If the problem continues, use Contact / Submit Inquiry to contact support.";
+    }
+
+    else {
+        response =
+            "<strong>🤖 EduRisk AI Support</strong><br><br>" +
+            "I can help with Website Help, AI Risk Prediction, Login / Account Help, Forgot Password, Prediction History and Technical Problems.<br><br>" +
+            "Please ask a specific question or use Contact / Submit Inquiry for further assistance.";
+    }
+
+    answer.style.display = "block";
+    answer.innerHTML = response;
+}
 </script>
 
 <!-- ================= INQUIRY MODAL ================= -->
