@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for, s
 import joblib
 import pandas as pd
 import psycopg2
+import threading
 import os
 import smtplib
 from dotenv import load_dotenv
@@ -44,7 +45,7 @@ Status: Pending
 """
     )
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+    with smtplib.SMTP("smtp.gmail.com", 587, timeout=10) as server:
 
         server.starttls()
 
@@ -55,6 +56,12 @@ Status: Pending
 
         server.send_message(msg)
 
+def send_inquiry_email_background(name, email, message):
+    try:
+        send_inquiry_email(name, email, message)
+        print("INQUIRY EMAIL SENT")
+    except Exception as e:
+        print("INQUIRY EMAIL ERROR:", repr(e))
 
 # =====================================================
 # FLASK APP
@@ -199,17 +206,22 @@ def submit_inquiry():
     # =================================================
 
     try:
-        print("EMAIL FUNCTION STARTED")
-        send_inquiry_email(name, email, message)
-        email_status = "EMAIL_SENT"
+        threading.Thread(
+            target=send_inquiry_email_background,
+            args=(name, email, message),
+            daemon=True
+        ).start()
+
+        email_status = "EMAIL_QUEUED"
+
     except Exception as e:
-        print("INQUIRY EMAIL ERROR:", repr(e))
-        email_status = "EMAIL_ERROR: " + str(e)
+        print("INQUIRY EMAIL THREAD ERROR:", repr(e))
+        email_status = "EMAIL_ERROR"
 
     return jsonify({
-    "success": True,
-    "message": "Inquiry submitted successfully! | " + email_status
-})
+        "success": True,
+        "message": "Inquiry submitted successfully! | " + email_status
+    })
 
 # =====================================================
 # REGISTER
