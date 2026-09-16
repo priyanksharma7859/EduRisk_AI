@@ -3,7 +3,6 @@ import joblib
 import pandas as pd
 import psycopg2
 import threading
-import requests
 import os
 import smtplib
 from dotenv import load_dotenv
@@ -25,44 +24,32 @@ load_dotenv()
 # =====================================================
 
 def send_inquiry_email(name, email, message):
-    resend_api_key = os.environ.get("RESEND_API_KEY")
+    sender = os.environ.get("EMAIL_SENDER")
+    receiver = os.environ.get("EMAIL_RECEIVER")
+    password = os.environ.get("EMAIL_PASSWORD")
 
-    if not resend_api_key:
-        raise Exception("RESEND_API_KEY is not configured")
+    msg = EmailMessage()
+    msg["Subject"] = "New EduRisk AI Inquiry"
+    msg["From"] = sender
+    msg["To"] = receiver
 
-    msg = {
-        "from": "EduRisk AI <onboarding@resend.dev>",
-        "to":"sharmapriyank9090@gmail.com",
-        "subject": "New EduRisk AI Inquiry",
-        "html": f"""
-        <h2>New EduRisk AI Inquiry</h2>
+    msg.set_content(
+        f"""New EduRisk AI Inquiry
 
-        <p><strong>Name:</strong> {name}</p>
-        <p><strong>Email:</strong> {email}</p>
+Name: {name}
+Email: {email}
 
-        <p><strong>Inquiry Message:</strong></p>
-        <p>{message}</p>
+Inquiry Message:
+{message}
 
-        <p><strong>Status:</strong> Pending</p>
-        """
-    }
-
-    response = requests.post(
-        "https://api.resend.com/emails",
-        headers={
-            "Authorization": f"Bearer {resend_api_key}",
-            "Content-Type": "application/json"
-        },
-        json=msg,
-        timeout=10
+Status: Pending
+"""
     )
 
-    if response.status_code >= 400:
-        raise Exception(
-            f"Resend API Error {response.status_code}: {response.text}"
-        )
-
-    print("RESEND EMAIL SENT:", response.text)
+    with smtplib.SMTP("smtp.gmail.com", 587, timeout=10) as server:
+        server.starttls()
+        server.login(sender, password)
+        server.send_message(msg)
 
 def send_inquiry_email_background(name, email, message):
     try:
