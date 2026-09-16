@@ -54,9 +54,19 @@ Status: Pending
 def send_inquiry_email_background(name, email, message):
     try:
         send_inquiry_email(name, email, message)
-        print("INQUIRY EMAIL SENT")
+
+        email_status = "EMAIL_SENT"
+
     except Exception as e:
         print("INQUIRY EMAIL ERROR:", repr(e))
+
+        email_status = "EMAIL_ERROR"
+
+    return jsonify({
+        "success": email_status == "EMAIL_SENT",
+        "email_status": email_status
+    }), 200 if email_status == "EMAIL_SENT" else 500
+
 
 # =====================================================
 # FLASK APP
