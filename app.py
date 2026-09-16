@@ -32,7 +32,7 @@ def send_inquiry_email(name, email, message):
 
     msg = {
         "from": "EduRisk AI <onboarding@resend.dev>",
-        "to": [os.environ.get("EMAIL_RECEIVER")],
+        "to": os.environ.get("EMAIL_RECEIVER"),
         "subject": "New EduRisk AI Inquiry",
         "html": f"""
         <h2>New EduRisk AI Inquiry</h2>
