@@ -54,13 +54,12 @@ Status: Pending
 def send_inquiry_email_background(name, email, message):
     try:
         send_inquiry_email(name, email, message)
-
-        email_status = "EMAIL_SENT"
+        print("INQUIRY EMAIL STATUS: EMAIL_SENT")
+        return "EMAIL_SENT"
 
     except Exception as e:
         print("INQUIRY EMAIL ERROR:", repr(e))
-
-        email_status = "EMAIL_ERROR"
+        return "EMAIL_ERROR"
 
     return jsonify({
         "success": email_status == "EMAIL_SENT",
@@ -169,7 +168,6 @@ def submit_inquiry():
 
         cursor = conn.cursor()
 
-        # Save inquiry in Supabase
         cursor.execute(
             """
             INSERT INTO inquiries
@@ -205,12 +203,12 @@ def submit_inquiry():
 
         conn.close()
 
-
     # =================================================
     # SEND EMAIL
     # =================================================
 
     try:
+
         threading.Thread(
             target=send_inquiry_email_background,
             args=(name, email, message),
@@ -220,6 +218,7 @@ def submit_inquiry():
         email_status = "EMAIL_QUEUED"
 
     except Exception as e:
+
         print("INQUIRY EMAIL THREAD ERROR:", repr(e))
         email_status = "EMAIL_ERROR"
 
@@ -227,7 +226,6 @@ def submit_inquiry():
         "success": True,
         "message": "Inquiry submitted successfully! | " + email_status
     })
-
 # =====================================================
 # REGISTER
 # =====================================================
